@@ -121,6 +121,16 @@ def home():
 def login():
     return render_template('login.html')
 
+
+#
+# @app.route("/login",methods = ['GET','POST'])
+# def login():
+#     if(request.method=='POST'):
+#         return render_template('login.html')
+#     elif(request.method=='GET'):
+#         return render_template('login.html')
+
+
 @app.route("/signup", methods = ['GET', 'POST'])
 def signUp():
 
@@ -200,13 +210,71 @@ def check():
         cursor.execute("SELECT email FROM users WHERE email ='"+email+"' AND password ='"+password+"' ")
         user = cursor.fetchone()
 
-        if len(user) is 1:
-            return render_template('index_blog.html', params=params, posts=posts)
-        else:
-            flash('Incorrect Credentials', 'danger')
+        try:
+            if len(user) is 1:
+                return render_template('index_blog.html', params=params, posts=posts)
+        except:
+            flash('Login Failed', 'danger')
             return render_template('login.html')
 
 
+
+
+@app.route("/checkUser/ueditd")
+def ueditt():
+    posts = Posts.query.filter_by().all()
+    last = math.ceil(len(posts)/int(params['no_of_posts']))
+    #[0: params['no_of_posts']]
+    #posts = posts[]
+    page = request.args.get('page')
+    if(not str(page).isnumeric()):
+        page = 1
+    page= int(page)
+    posts = posts[(page-1)*int(params['no_of_posts']): (page-1)*int(params['no_of_posts'])+ int(params['no_of_posts'])]
+    #Pagination Logic
+    #First
+    if (page==1):
+        prev = "#"
+        next = "?page="+ str(page+1)
+    elif(page==last):
+        prev = "?page=" + str(page - 1)
+        next = "#"
+    else:
+        prev = "?page=" + str(page - 1)
+        next = "?page=" + str(page + 1)
+    return render_template('index_blog.html', params=params, posts=posts,prev=prev, next=next)
+
+
+
+
+
+@app.route("/checkUser/uedit/<string:sno>", methods = ['GET', 'POST'])
+def Uedit(sno):
+    if ('user' in session and session['user'] == params['admin_user']):
+        if request.method == 'POST':
+            box_title = request.form.get('title')
+            tline = request.form.get('tline')
+            slug = request.form.get('slug')
+            content = request.form.get('content')
+            img_file = request.form.get('img_file')
+            date = datetime.now()
+
+            if sno=='0':
+                post = Posts(title=box_title, slug=slug, content=content, tagline=tline, img_file=img_file, date=date)
+                db.session.add(post)
+                db.session.commit()
+            else:
+                post = Posts.query.filter_by(sno=sno).first()
+                post.title = box_title
+                post.slug = slug
+                post.content = content
+                post.tagline = tline
+                post.img_file = img_file
+                post.date = date
+                db.session.commit()
+                return redirect('/checkUser/uedit/'+sno)
+        post = Posts.query.filter_by(sno=sno).first()
+        return render_template('uedit.html', params=params, post=post, sno=sno)
 
 
 
