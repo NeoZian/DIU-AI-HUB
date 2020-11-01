@@ -1,0 +1,14 @@
+
+
+Using XAMPP on ubuntu:
+
+    Create a folder called mysqld inside /var/run directory. You can accomplish that using the command sudo mkdir /var/run/mysqld.
+
+    Create a symbolic link to mysql.sock file that is created by the XAMPP server when it is started. You can use the command sudo ln -s /opt/lampp/var/mysql/mysql.sock /var/run/mysqld/mysqld.sock.
+
+    Note: The mysql.sock file is created when the server is started and removed when the server is stopped, so sometimes the link you created might appear to be broken but it should work as long as you have started the server using either sudo /opt/lampp/lampp start or any other means.
+
+    Start the server if it's not already running and try executing your program again.
+
+Good luck! I hope you'll get away with it this time......:++++////\\\\\()()
+

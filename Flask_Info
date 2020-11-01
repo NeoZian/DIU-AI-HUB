@@ -1,0 +1,18 @@
+
+source venv/bin/activate
+
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+>>>>save this file as projectName.py in the my_flask_app directory
+
+export FLASK_APP=helloflask run
+
+flask run
+
+browse:::127.0.0.1:5000
+
